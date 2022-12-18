@@ -6,12 +6,12 @@ import { useMutation } from '@apollo/client';
 import UserOperations from '../../../graphql/operations/user';
 import { CreateUsernameData, CreateUsernameVariables } from '../../util/types';
 
-interface IAuthProps {
+interface AuthProps {
   session: Session | null;
   reloadSession: () => void;
 }
 
-const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
+const Auth: React.FC<AuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState('')
   
   const [createUsername, { data, loading, error }] = useMutation<
@@ -23,10 +23,15 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
 
   const onSubmit = async () => {
     if(!username) return
+
     try {
-      await createUsername({ variables: { username }})
-    } catch (err) {
-      console.log('Error submitting username')
+      await createUsername({ 
+        variables: { 
+          username,
+        }
+      })
+    } catch (err: any) {
+      console.log('Error submitting username', err)
     }
   }
 
@@ -41,7 +46,13 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <Button color='black' width='100%' onClick={onSubmit}>Save</Button>
+            <Button 
+              color='black' 
+              width='100%' 
+              onClick={onSubmit}
+            >
+              Save
+            </Button>
             <Button onClick={() => signOut()}>Sign Out</Button>
           </> :
           <>
