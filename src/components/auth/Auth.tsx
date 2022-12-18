@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { Session } from 'next-auth'
 import { signIn, signOut } from 'next-auth/react'
 import { Button, Center, Stack, Text, Image, Input } from '@chakra-ui/react'
+import { useMutation } from '@apollo/client';
+import UserOperations from '../../../graphql/operations/user';
+import { CreateUsernameData, CreateUsernameVariables } from '../../util/types';
 
 interface IAuthProps {
   session: Session | null;
@@ -10,11 +13,18 @@ interface IAuthProps {
 
 const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState('')
+  
+  const [createUsername, { data, loading, error }] = useMutation<
+    CreateUsernameData, 
+    CreateUsernameVariables
+  >(UserOperations.Mutations.createUsername)
+
+  console.log(data, loading, error)
 
   const onSubmit = async () => {
+    if(!username) return
     try {
-      //create username mutation to send username to graphql api
-      console.log('save')
+      await createUsername({ variables: { username }})
     } catch (err) {
       console.log('Error submitting username')
     }
