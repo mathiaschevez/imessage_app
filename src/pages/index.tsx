@@ -9,9 +9,10 @@ import { Session } from 'next-auth'
 export default function Home() {
   const { data: session } = useSession()
 
-  console.log(session)
-
-  const reloadSession = () => {}
+  const reloadSession = () => {
+    const event = new Event("visibilitychange")
+    document.dispatchEvent(event)
+  }
 
   return (
     <>
